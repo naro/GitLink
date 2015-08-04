@@ -18,7 +18,7 @@ REMOTE_CONFIG = {
     },
     'bitbucket': {
         'url': 'https://bitbucket.org/{0}/{1}/src/{2}{3}/{4}',
-        'line_param': '#cl-'
+        'line_param': '#{filename}-'
     },
     'codebasehq': {
         'url': 'https://{0}.codebasehq.com/projects/{1}/repositories/{2}/blob/{3}{4}/{5}',
@@ -56,7 +56,7 @@ class GitlinkCommand(sublime_plugin.TextCommand):
         if remote_name != 'codebasehq':
             user, repo = git_config.replace(".git", "").split("/")
         else:
-           user, project, repo = git_config.replace(".git", "").split("/")
+            user, project, repo = git_config.replace(".git", "").split("/")
 
         # Find top level repo in current dir structure
         folder = cmd.getoutput("git rev-parse --show-toplevel")
@@ -72,7 +72,8 @@ class GitlinkCommand(sublime_plugin.TextCommand):
 
         if(args['line']):
             row = self.view.rowcol(self.view.sel()[0].begin())[0] + 1
-            url += "{0}{1}".format(remote['line_param'], row)
+            line_param = remote['line_param'].format(filename=filename)
+            url += "{0}{1}".format(line_param, row)
 
         if(args['web']):
             webbrowser.open_new_tab(url)
